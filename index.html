@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ThumbnailPro — YouTube Thumbnail Designer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --card: #161616;
+      --accent: #ff3c00;
+      --accent2: #ffb800;
+      --text: #f0ede8;
+      --muted: #6b6762;
+      --border: #222;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.08em;
+      color: var(--text);
+    }
+    .logo span { color: var(--accent); }
+    nav ul { list-style: none; display: flex; gap: 2.5rem; }
+    nav a {
+      text-decoration: none; color: var(--muted);
+      font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--accent); color: #fff !important;
+      padding: 0.5rem 1.2rem; border-radius: 2px;
+      font-weight: 600; letter-spacing: 0.04em;
+    }
+    .nav-cta:hover { background: #e03500; color: #fff !important; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 10rem 4rem 6rem;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 80% 50%, rgba(255,60,0,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 80% at 10% 80%, rgba(255,184,0,0.05) 0%, transparent 60%);
+    }
+    .hero-grid {
+      position: absolute; inset: 0; z-index: 0; opacity: 0.04;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 900px; }
+    .hero-eyebrow {
+      font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .hero-eyebrow::before {
+      content: ''; display: inline-block; width: 32px; height: 1px; background: var(--accent);
+    }
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 10vw, 9rem);
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+    }
+    h1 .outline {
+      -webkit-text-stroke: 1px var(--text);
+      color: transparent;
+    }
+    h1 .highlight { color: var(--accent); }
+    .hero-sub {
+      margin-top: 2rem; max-width: 480px;
+      font-size: 1.05rem; line-height: 1.7; color: #a09d99;
+    }
+    .hero-actions { margin-top: 3rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent); color: #fff;
+      padding: 1rem 2.2rem; font-size: 0.9rem;
+      font-family: 'DM Sans', sans-serif; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      border: none; cursor: pointer; text-decoration: none;
+      display: inline-block; border-radius: 2px;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: #e03500; transform: translateY(-2px); }
+    .btn-outline {
+      background: transparent; color: var(--text);
+      padding: 1rem 2.2rem; font-size: 0.9rem;
+      font-family: 'DM Sans', sans-serif; font-weight: 400;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      border: 1px solid var(--border); cursor: pointer; text-decoration: none;
+      display: inline-block; border-radius: 2px;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--muted); transform: translateY(-2px); }
+    .hero-stats {
+      margin-top: 5rem; display: flex; gap: 3.5rem; flex-wrap: wrap;
+    }
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8rem; color: var(--text);
+      letter-spacing: 0.04em; line-height: 1;
+    }
+    .stat-num span { color: var(--accent); }
+    .stat-label {
+      font-size: 0.78rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.12em;
+      margin-top: 0.25rem;
+    }
+
+    /* ── SECTION COMMONS ── */
+    section { padding: 6rem 4rem; }
+    .section-label {
+      font-size: 0.75rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 0.8rem;
+    }
+    h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      letter-spacing: 0.03em; line-height: 1;
+    }
+
+    /* ── MARQUEE ── */
+    .marquee-wrap {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0; overflow: hidden;
+      background: var(--surface);
+    }
+    .marquee { display: flex; gap: 0; animation: scroll 20s linear infinite; width: max-content; }
+    .marquee-item {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem; letter-spacing: 0.15em;
+      color: var(--muted); padding: 0 2rem;
+      white-space: nowrap;
+    }
+    .marquee-item.accent { color: var(--accent); }
+    @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── PORTFOLIO ── */
+    #portfolio { background: var(--bg); }
+    .portfolio-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: 3rem; flex-wrap: wrap; gap: 1.5rem;
+    }
+    .filter-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .filter-btn {
+      font-family: 'DM Sans', sans-serif; font-size: 0.78rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      background: none; border: 1px solid var(--border);
+      color: var(--muted); padding: 0.45rem 1rem;
+      cursor: pointer; border-radius: 2px; transition: all 0.2s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--accent); border-color: var(--accent); color: #fff;
+    }
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1px; background: var(--border);
+    }
+    .thumb-card {
+      background: var(--card);
+      position: relative; overflow: hidden;
+      aspect-ratio: 16/9; cursor: pointer;
+    }
+    .thumb-card img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .thumb-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%);
+      opacity: 0; transition: opacity 0.3s;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 1.2rem;
+    }
+    .thumb-card:hover img { transform: scale(1.06); }
+    .thumb-card:hover .thumb-overlay { opacity: 1; }
+    .thumb-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .thumb-tag {
+      font-size: 0.7rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--accent2);
+    }
+    /* placeholder thumbnails using CSS gradients */
+    .thumb-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.15);
+    }
+
+    /* ── SERVICES ── */
+    #services { background: var(--surface); }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1px; background: var(--border); margin-top: 3rem;
+    }
+    .service-card {
+      background: var(--card); padding: 2.5rem;
+      transition: background 0.25s;
+    }
+    .service-card:hover { background: #1c1c1c; }
+    .service-icon {
+      font-size: 2rem; margin-bottom: 1.5rem;
+    }
+    .service-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem; letter-spacing: 0.04em;
+      margin-bottom: 0.8rem;
+    }
+    .service-desc { font-size: 0.9rem; color: #857f79; line-height: 1.7; }
+    .service-price {
+      margin-top: 1.5rem;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem; letter-spacing: 0.04em;
+      color: var(--accent2);
+    }
+    .service-price sub { font-size: 0.9rem; color: var(--muted); font-family: 'DM Sans', sans-serif; }
+
+    /* ── PROCESS ── */
+    #process { background: var(--bg); }
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 2rem; margin-top: 3.5rem;
+    }
+    .step { position: relative; }
+    .step-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 5rem; line-height: 1;
+      color: var(--border); margin-bottom: 1rem;
+    }
+    .step-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem; letter-spacing: 0.04em;
+      margin-bottom: 0.6rem;
+    }
+    .step-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.7; }
+    .step::after {
+      content: '→'; position: absolute;
+      top: 1.2rem; right: -1rem;
+      color: var(--accent); font-size: 1.5rem;
+    }
+    .step:last-child::after { display: none; }
+
+    /* ── TESTIMONIALS ── */
+    #testimonials { background: var(--surface); }
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1px; background: var(--border); margin-top: 3rem;
+    }
+    .testi-card { background: var(--card); padding: 2rem; }
+    .testi-stars { color: var(--accent2); font-size: 0.85rem; margin-bottom: 1rem; }
+    .testi-text { font-size: 0.95rem; line-height: 1.75; color: #b0aca7; font-style: italic; margin-bottom: 1.5rem; }
+    .testi-author { display: flex; align-items: center; gap: 0.75rem; }
+    .testi-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--accent); display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .testi-name { font-weight: 600; font-size: 0.88rem; }
+    .testi-channel { font-size: 0.75rem; color: var(--muted); }
+
+    /* ── ABOUT ── */
+    #about {
+      background: var(--bg);
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 6rem; align-items: center;
+    }
+    .about-visual {
+      position: relative; aspect-ratio: 1;
+      background: var(--card); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .about-visual-inner {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 8rem; line-height: 1;
+      -webkit-text-stroke: 1px var(--border);
+      color: transparent; user-select: none;
+    }
+    .about-accent-box {
+      position: absolute; bottom: -1px; right: -1px;
+      background: var(--accent); width: 60px; height: 60px;
+    }
+    .about-content .section-label { margin-bottom: 0.8rem; }
+    .about-content h2 { margin-bottom: 1.5rem; }
+    .about-body { font-size: 0.95rem; line-height: 1.8; color: #a09d99; margin-bottom: 2rem; }
+    .about-skills { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .skill-tag {
+      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+      border: 1px solid var(--border); color: var(--muted);
+      padding: 0.35rem 0.8rem; border-radius: 2px;
+    }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--surface); }
+    .contact-inner {
+      max-width: 680px; margin: 0 auto; text-align: center;
+    }
+    #contact h2 { margin-bottom: 1rem; }
+    .contact-sub { color: var(--muted); margin-bottom: 3rem; font-size: 0.95rem; }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; text-align: left; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .contact-form input,
+    .contact-form select,
+    .contact-form textarea {
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem; padding: 0.9rem 1.1rem; border-radius: 2px;
+      outline: none; width: 100%; transition: border-color 0.2s;
+    }
+    .contact-form input:focus,
+    .contact-form select:focus,
+    .contact-form textarea:focus { border-color: var(--accent); }
+    .contact-form input::placeholder,
+    .contact-form textarea::placeholder { color: var(--muted); }
+    .contact-form select option { background: var(--card); }
+    .contact-form textarea { resize: vertical; min-height: 120px; }
+    .submit-btn {
+      background: var(--accent); color: #fff;
+      padding: 1rem; font-size: 0.9rem;
+      font-family: 'DM Sans', sans-serif; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      border: none; cursor: pointer; border-radius: 2px;
+      transition: background 0.2s; margin-top: 0.5rem;
+    }
+    .submit-btn:hover { background: #e03500; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 2rem 4rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem; letter-spacing: 0.08em;
+    }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; gap: 2rem; }
+    .footer-links a { text-decoration: none; color: var(--muted); font-size: 0.8rem; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy { font-size: 0.75rem; color: var(--muted); }
+
+    /* ── ANIMATIONS ── */
+    .fade-up {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      nav ul { display: none; }
+      section, .hero { padding: 5rem 1.5rem; }
+      #about { grid-template-columns: 1fr; gap: 3rem; }
+      .about-visual { max-width: 300px; margin: 0 auto; }
+      footer { padding: 1.5rem; }
+      .hero-stats { gap: 2rem; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">Thumb<span>Pro</span></div>
+    <ul>
+      <li><a href="#portfolio">Work</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#process">Process</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact" class="nav-cta">Hire Me</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">YouTube Thumbnail Designer</div>
+      <h1>
+        MAKE THEM<br>
+        <span class="outline">CLICK</span><br>
+        <span class="highlight">EVERY</span> TIME
+      </h1>
+      <p class="hero-sub">
+        High-converting YouTube thumbnails crafted to boost your CTR, grow your channel, and make your videos impossible to scroll past.
+      </p>
+      <div class="hero-actions">
+        <a href="#portfolio" class="btn-primary">View My Work</a>
+        <a href="#contact" class="btn-outline">Get a Quote</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num">200<span>+</span></div>
+          <div class="stat-label">Thumbnails Delivered</div>
+        </div>
+        <div>
+          <div class="stat-num">50<span>+</span></div>
+          <div class="stat-label">Happy Clients</div>
+        </div>
+        <div>
+          <div class="stat-num">3<span>×</span></div>
+          <div class="stat-label">Avg CTR Improvement</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee">
+      <span class="marquee-item">CTR Optimization</span>
+      <span class="marquee-item accent">✦</span>
+      <span class="marquee-item">Gaming Thumbnails</span>
+      <span class="marquee-item accent">✦</span>
+      <span class="marquee-item">Vlog & Lifestyle</span>
+      <span class="marquee-item accent">✦</span>
+      <span class="marquee-item">Finance & Business</span>
+      <span class="marquee-item accent">✦</span>
+      <span class="marquee-item">Tech Reviews</span>
+      <span class="marquee-item accent">✦</span>
+      <span class="marquee-item">Educational Content</span>
+      <span class="marquee-item accent">✦</span>
+      <span class="marquee-item">24hr Turnaround</span>
+      <span class="marquee-item accent">✦</span>
+      <span class="marquee-item">Unlimited Revisions</span>
+      <span class="marquee-item accent">✦</span>
+      <!-- duplicate for seamless loop -->
+      <span class="marquee-item">CTR Optimization</span>
+      <span class="marquee-item accent">✦</span>
+      <span class="marquee-item">Gaming Thumbnails</span>
+      <span class="marquee-item accent">✦</span>
+      <span class="marquee-item">Vlog & Lifestyle</span>
+      <span class="marquee-item accent">✦</span>
+      <span class="marquee-item">Finance & Business</span>
+      <span class="marquee-item accent">✦</span>
+      <span class="marquee-item">Tech Reviews</span>
+      <span class="marquee-item accent">✦</span>
+      <span class="marquee-item">Educational Content</span>
+      <span class="marquee-item accent">✦</span>
+      <span class="marquee-item">24hr Turnaround</span>
+      <span class="marquee-item accent">✦</span>
+      <span class="marquee-item">Unlimited Revisions</span>
+      <span class="marquee-item accent">✦</span>
+    </div>
+  </div>
+
+  <!-- PORTFOLIO -->
+  <section id="portfolio">
+    <div class="portfolio-header fade-up">
+      <div>
+        <div class="section-label">Portfolio</div>
+        <h2>SELECTED WORK</h2>
+      </div>
+      <div class="filter-tabs">
+        <button class="filter-btn active">All</button>
+        <button class="filter-btn">Gaming</button>
+        <button class="filter-btn">Lifestyle</button>
+        <button class="filter-btn">Tech</button>
+        <button class="filter-btn">Finance</button>
+      </div>
+    </div>
+    <div class="portfolio-grid fade-up">
+      <!-- Replace these placeholders with your actual thumbnail images -->
+      <!-- To use your images: change the div.thumb-placeholder to <img src="your-image.jpg" alt="..."> -->
+      <div class="thumb-card">
+        <div class="thumb-placeholder" style="background: linear-gradient(135deg, #1a0a00, #ff3c00 150%)">GAMING</div>
+        <div class="thumb-overlay"><div class="thumb-title">10 Tips to Win Every Game</div><div class="thumb-tag">Gaming</div></div>
+      </div>
+      <div class="thumb-card">
+        <div class="thumb-placeholder" style="background: linear-gradient(135deg, #00122a, #0057ff 150%)">TECH</div>
+        <div class="thumb-overlay"><div class="thumb-title">iPhone 16 Full Review</div><div class="thumb-tag">Tech</div></div>
+      </div>
+      <div class="thumb-card">
+        <div class="thumb-placeholder" style="background: linear-gradient(135deg, #001a0d, #00c853 150%)">FINANCE</div>
+        <div class="thumb-overlay"><div class="thumb-title">I Made $10K in 30 Days</div><div class="thumb-tag">Finance</div></div>
+      </div>
+      <div class="thumb-card">
+        <div class="thumb-placeholder" style="background: linear-gradient(135deg, #1a001a, #cc00ff 150%)">VLOG</div>
+        <div class="thumb-overlay"><div class="thumb-title">My Morning Routine 2024</div><div class="thumb-tag">Lifestyle</div></div>
+      </div>
+      <div class="thumb-card">
+        <div class="thumb-placeholder" style="background: linear-gradient(135deg, #1a0a00, #ffb800 150%)">FOOD</div>
+        <div class="thumb-overlay"><div class="thumb-title">Secret Restaurant Recipe</div><div class="thumb-tag">Food</div></div>
+      </div>
+      <div class="thumb-card">
+        <div class="thumb-placeholder" style="background: linear-gradient(135deg, #0a0014, #ff3c00 150%)">GAMING</div>
+        <div class="thumb-overlay"><div class="thumb-title">Speedrunning World Record</div><div class="thumb-tag">Gaming</div></div>
+      </div>
+    </div>
+    <p style="text-align:center; margin-top: 2.5rem; color: var(--muted); font-size: 0.85rem;">
+      Replace placeholder boxes with your actual thumbnail screenshots
+    </p>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="fade-up">
+      <div class="section-label">What I Offer</div>
+      <h2>SERVICES &<br>PRICING</h2>
+    </div>
+    <div class="services-grid fade-up">
+      <div class="service-card">
+        <div class="service-icon">⚡</div>
+        <div class="service-name">Single Thumbnail</div>
+        <div class="service-desc">One high-quality thumbnail with custom typography, color grading, and optimized composition for maximum CTR.</div>
+        <div class="service-price">₹499 <sub>/ thumbnail</sub></div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🔥</div>
+        <div class="service-name">Monthly Package</div>
+        <div class="service-desc">10 thumbnails per month with priority delivery, consistent branding, and a dedicated style guide for your channel.</div>
+        <div class="service-price">₹3,999 <sub>/ month</sub></div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🎯</div>
+        <div class="service-name">Channel Branding</div>
+        <div class="service-desc">Full channel rebrand: thumbnail template, banner, logo, and a 5-thumbnail starter pack. One-time setup.</div>
+        <div class="service-price">₹2,499 <sub>/ one-time</sub></div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🚀</div>
+        <div class="service-name">Rush Delivery</div>
+        <div class="service-desc">Need it fast? Get your thumbnail within 4–6 hours. Available for single thumbnails and urgent projects.</div>
+        <div class="service-price">₹799 <sub>/ thumbnail</sub></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section id="process">
+    <div class="fade-up">
+      <div class="section-label">How It Works</div>
+      <h2>MY PROCESS</h2>
+    </div>
+    <div class="process-steps fade-up">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-title">Brief</div>
+        <div class="step-desc">Share your video title, topic, target audience, and any reference images or style preferences.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-title">Concept</div>
+        <div class="step-desc">I research top-performing thumbnails in your niche and sketch the most click-worthy composition.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-title">Design</div>
+        <div class="step-desc">Full design with custom text, colors, cutouts, and effects optimized for both desktop and mobile viewers.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-title">Revise</div>
+        <div class="step-desc">Unlimited revisions until you love it. Your satisfaction is the only metric that matters.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">05</div>
+        <div class="step-title">Deliver</div>
+        <div class="step-desc">Final PNG in full resolution (1280×720), ready to upload. Delivered via Google Drive or email.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials">
+    <div class="fade-up">
+      <div class="section-label">Client Love</div>
+      <h2>WHAT CREATORS SAY</h2>
+    </div>
+    <div class="testi-grid fade-up">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"My CTR went from 3% to 8.5% after switching to these thumbnails. Absolute game changer for my gaming channel."</div>
+        <div class="testi-author">
+          <div class="testi-avatar">RK</div>
+          <div><div class="testi-name">Rahul K.</div><div class="testi-channel">@RahulPlays — 45K subs</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"Super fast, very professional. I ordered at midnight and had the thumbnail ready by morning. The design was perfect!"</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:var(--accent2); color: #000;">PR</div>
+          <div><div class="testi-name">Priya R.</div><div class="testi-channel">@PriyaVlogs — 12K subs</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"Finally found a designer who understands the finance niche. Clean, bold, trustworthy — exactly what my audience responds to."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:#2a5caa;">AM</div>
+          <div><div class="testi-name">Arjun M.</div><div class="testi-channel">@MoneyMindset — 28K subs</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-visual fade-up">
+      <div class="about-visual-inner">TP</div>
+      <div class="about-accent-box"></div>
+    </div>
+    <div class="about-content fade-up">
+      <div class="section-label">About Me</div>
+      <h2>THE DESIGNER BEHIND THE CLICKS</h2>
+      <p class="about-body">
+        Hey! I'm a freelance YouTube thumbnail designer with a passion for visual storytelling and data-driven design. I've spent years studying what makes people stop scrolling — and I put that knowledge into every thumbnail I create.
+        <br><br>
+        I work with creators across gaming, finance, tech, lifestyle, and education niches. Whether you have 100 subscribers or 100K, your content deserves a thumbnail that performs.
+      </p>
+      <div class="about-skills">
+        <span class="skill-tag">Photoshop</span>
+        <span class="skill-tag">Canva Pro</span>
+        <span class="skill-tag">Figma</span>
+        <span class="skill-tag">Color Theory</span>
+        <span class="skill-tag">Typography</span>
+        <span class="skill-tag">CTR Optimization</span>
+        <span class="skill-tag">Photo Editing</span>
+        <span class="skill-tag">Brand Identity</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-inner">
+      <div class="section-label fade-up">Let's Work Together</div>
+      <h2 class="fade-up">GET A FREE<br>THUMBNAIL MOCKUP</h2>
+      <p class="contact-sub fade-up">Fill out the form and I'll send you a free concept within 24 hours — no strings attached.</p>
+      <form class="contact-form fade-up" onsubmit="handleSubmit(event)">
+        <div class="form-row">
+          <input type="text" placeholder="Your Name" required />
+          <input type="email" placeholder="Email Address" required />
+        </div>
+        <input type="text" placeholder="YouTube Channel Name or URL" />
+        <select>
+          <option value="" disabled selected>Select a Service</option>
+          <option>Single Thumbnail — ₹499</option>
+          <option>Monthly Package — ₹3,999/mo</option>
+          <option>Channel Branding — ₹2,499</option>
+          <option>Rush Delivery — ₹799</option>
+          <option>Just want a free mockup</option>
+        </select>
+        <textarea placeholder="Tell me about your video — title, topic, style you're going for…"></textarea>
+        <button type="submit" class="submit-btn">Send My Request →</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Thumb<span>Pro</span></div>
+    <div class="footer-links">
+      <a href="#portfolio">Work</a>
+      <a href="#services">Services</a>
+      <a href="#contact">Contact</a>
+      <!-- Add your social links below -->
+      <a href="#">Instagram</a>
+      <a href="#">Twitter</a>
+    </div>
+    <div class="footer-copy">© 2025 ThumbnailPro. All rights reserved.</div>
+  </footer>
+
+  <script>
+    // Filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // Scroll animations
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // Form submit
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.submit-btn');
+      btn.textContent = '✓ Sent! I\'ll be in touch soon.';
+      btn.style.background = '#1a7a3a';
+      setTimeout(() => {
+        btn.textContent = 'Send My Request →';
+        btn.style.background = '';
+        e.target.reset();
+      }, 4000);
+    }
+  </script>
+</body>
+</html>
